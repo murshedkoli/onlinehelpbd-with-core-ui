@@ -11,7 +11,9 @@ import {
   CPagination
 } from '@coreui/react'
 
-import usersData from './UsersData'
+
+
+
 
 const getBadge = status => {
   switch (status) {
@@ -37,45 +39,59 @@ const Users = () => {
     currentPage !== page && setPage(currentPage)
   }, [currentPage, page])
 
+
+  const [usersData, setusersData] = useState([]);
+  console.log(usersData)
+
+  useEffect(() => {
+    fetch('https://onlinehelpbd.herokuapp.com/users')
+      .then(res => res.json())
+      .then(data => {
+        setusersData(data.reverse());
+
+      })
+  }, [])
+
+
   return (
     <CRow>
-      <CCol xl={6}>
+      <CCol xl={12}>
         <CCard>
           <CCardHeader>
             Users
-            <small className="text-muted"> example</small>
+            <small className="text-muted"> Registerd</small>
           </CCardHeader>
           <CCardBody>
-          <CDataTable
-            items={usersData}
-            fields={[
-              { key: 'name', _classes: 'font-weight-bold' },
-              'registered', 'role', 'status'
-            ]}
-            hover
-            striped
-            itemsPerPage={5}
-            activePage={page}
-            clickableRows
-            onRowClick={(item) => history.push(`/users/${item.id}`)}
-            scopedSlots = {{
-              'status':
-                (item)=>(
-                  <td>
-                    <CBadge color={getBadge(item.status)}>
-                      {item.status}
-                    </CBadge>
-                  </td>
-                )
-            }}
-          />
-          <CPagination
-            activePage={page}
-            onActivePageChange={pageChange}
-            pages={5}
-            doubleArrows={false} 
-            align="center"
-          />
+            <CDataTable
+              items={usersData}
+              fields={[
+                { key: 'name', _classes: 'font-weight-bold' },
+                'email', 'registeredData'
+              ]}
+              hover
+              striped
+              itemsPerPage={5}
+              activePage={page}
+              clickableRows
+              onRowClick={(item) => history.push(`/users/${item.id}`)}
+              scopedSlots={{
+                'status':
+                  (item) => (
+                    <td>
+                      <CBadge color={getBadge(item.status)}>
+                        {item.status}
+                      </CBadge>
+                    </td>
+                  )
+              }}
+            />
+            <CPagination
+              activePage={page}
+              onActivePageChange={pageChange}
+              pages={5}
+              doubleArrows={false}
+              align="center"
+            />
           </CCardBody>
         </CCard>
       </CCol>
